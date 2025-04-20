@@ -4,7 +4,7 @@ import os
 import cv2
 
 
-def prepare_model(device=0):
+def prepare_model():
     model = YOLO(f"yolo11l.pt")
     exported_file = model.export(format="engine")
 
@@ -12,14 +12,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cam_path", type=str)
     parser.add_argument("--cam_id", type=str)
-    parser.add_argument("--device", type=int, default=0, help="GPU device to use for export/inference")
 
     args = parser.parse_args()
     output_path = args.cam_id + ".txt"
 
     engine_file = "yolo11l.engine"
     if not os.path.exists(engine_file):
-        prepare_model(args.device)
+        prepare_model()
 
     tensorrt_model = YOLO(engine_file)
 
