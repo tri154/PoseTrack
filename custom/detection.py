@@ -49,3 +49,4 @@ def main():
         for det in dets:
             f.write(",".join(map(str, det)) + "\n")
     cap.release()
+    print("Done!")
