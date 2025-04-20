@@ -10,7 +10,9 @@ def main():
     parser.add_argument("--cam_id", type=str)
 
     args = parser.parse_args()
-    output_path = args.cam_id + ".txt"
+
+    root_folder = os.getcwd()
+    output_path = os.path.join(root_folder, "custom_result", "cam" + args.cam_id + "_dets" + ".txt")
 
     engine_file = "yolo11l.engine"
 
