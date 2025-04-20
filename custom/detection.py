@@ -4,25 +4,26 @@ import os
 import cv2
 
 
-
-def prepare_model():
-    model = YOLO("yolo11n.pt")
-    model.export(format="engine")
+def prepare_model(device=0):
+    print(f"Exporting YOLO model to TensorRT on GPU:{device}")
+    model = YOLO(f"yolo11l.pt")
+    exported_file = model.export(format="engine", device=device)
+    new_file = f"yolo11l_{device}.engine"
+    os.rename(exported_file, new_file)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cam_path", type=str)
     parser.add_argument("--cam_id", type=str)
+    parser.add_argument("--device", type=int, default=0, help="GPU device to use for export/inference")
 
     args = parser.parse_args()
     output_path = args.cam_id + ".txt"
 
-    if not os.path.exists("yolo11n.engine"):
-        print("yolo11n.engine not found! Preparing model...")
-        prepare_model()
+    prepare_model(args.device)
 
-    tensorrt_model = YOLO("yolo11n.engine")
+    tensorrt_model = YOLO(f"yolo11l_{args.device}.engine")
 
     GST_PIPELINE = f"filesrc location={args.cam_path} ! decodebin ! videoconvert ! appsink max-buffers=1 drop=true"
     cap = cv2.VideoCapture(GST_PIPELINE, cv2.CAP_GSTREAMER)
