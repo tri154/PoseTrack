@@ -21,7 +21,7 @@ POSE_CONFIG="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81
 POSE_CHECKPOINT="/kaggle/input/ckpt-model/lup_moco_r101.pth"
 
 # Define the Python script to run (the modified one)
-PYTHON_SCRIPT="mmpose/demo/process_single_camera.py" # Assuming it's in the mmpose/demo dir
+PYTHON_SCRIPT="custom/pose_estimate.py" # Assuming it's in the mmpose/demo dir
 
 # Optional: Define other parameters for the python script if needed
 BBOX_THR=0.3
