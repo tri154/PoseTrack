@@ -12,7 +12,6 @@ import json_tricks as json
 import mmcv
 import mmengine
 import numpy as np
-from mmengine.logging import print_log
 
 from mmpose.apis import inference_topdown
 from mmpose.apis import init_model as init_pose_estimator
@@ -56,7 +55,7 @@ def infer_one_image(frame, bboxes_s, pose_estimator):
     records = np.array(records, dtype=np.float32)
     # Ensure bboxes_s and records have the same number of rows
     if records.shape[0] != bboxes_s.shape[0]:
-        print_log(f"Warning: Mismatch between bbox count ({bboxes_s.shape[0]}) and pose results ({records.shape[0]})", logger='current', level=logging.WARN)
+        print(f"Warning: Mismatch between bbox count ({bboxes_s.shape[0]}) and pose results ({records.shape[0]})")
         # This case needs careful handling - maybe filter bboxes_s based on successful poses?
         # For now, assuming they match or pose_results might be shorter if some failed
         min_rows = min(records.shape[0], bboxes_s.shape[0])
@@ -96,10 +95,10 @@ def main():
 
     # --- Input Validation ---
     if not os.path.exists(args.video_path):
-        print_log(f"Error: Video file not found at {args.video_path}", logger='current', level=logging.ERROR)
+        print(f"Error: Video file not found at {args.video_path}")
         sys.exit(1)
     if not os.path.exists(args.det_path):
-        print_log(f"Error: Detection file not found at {args.det_path}", logger='current', level=logging.ERROR)
+        print(f"Error: Detection file not found at {args.det_path}")
         sys.exit(1)
 
     # --- Output Directory ---
@@ -119,10 +118,10 @@ def main():
         )
         # Get expected number of keypoints for output array sizing on empty frames/detections
         num_keypoints = pose_estimator.cfg.data_cfg.get('num_keypoints', 17) # Default to COCO's 17
-        print_log(f"Pose model expects {num_keypoints} keypoints.", logger='current')
+        print(f"Pose model expects {num_keypoints} keypoints.")
 
     except Exception as e:
-        print_log(f"Error initializing pose estimator: {e}", logger='current', level=logging.ERROR)
+        print(f"Error initializing pose estimator: {e}")
         sys.exit(1)
 
 
@@ -131,22 +130,22 @@ def main():
         det_annot = np.loadtxt(args.det_path, delimiter=",")
         if det_annot.ndim == 1: # Handle case of single detection in file
             det_annot = det_annot.reshape(1, -1)
-        print_log(f"Loaded {det_annot.shape[0]} detections from {args.det_path}", logger='current')
+        print(f"Loaded {det_annot.shape[0]} detections from {args.det_path}")
         # Basic check on columns (at least frame_id, x1,y1,x2,y2,score = 6)
         # The original script expected 7 columns and used indices 2:7 (5 cols)
         if det_annot.shape[1] < 7:
-             print_log(f"Warning: Detection file {args.det_path} has fewer than 7 columns.", logger='current', level=logging.WARN)
+             print(f"Warning: Detection file {args.det_path} has fewer than 7 columns.")
              # Adjust slicing if needed based on actual format
     except Exception as e:
-        print_log(f"Error loading detection file {args.det_path}: {e}", logger='current', level=logging.ERROR)
+        print(f"Error loading detection file {args.det_path}: {e}")
         sys.exit(1)
 
     # --- Process Video ---
     try:
         video = mmcv.VideoReader(args.video_path)
-        print_log(f"Processing video: {args.video_path} ({len(video)} frames)", logger='current')
+        print(f"Processing video: {args.video_path} ({len(video)} frames)")
     except Exception as e:
-        print_log(f"Error opening video file {args.video_path}: {e}", logger='current', level=logging.ERROR)
+        print(f"Error opening video file {args.video_path}: {e}")
         sys.exit(1)
 
     all_results = []
@@ -155,7 +154,7 @@ def main():
 
     for frame_id, frame in enumerate(tqdm(video, desc=f"Processing {os.path.basename(args.video_path)}")):
         if frame is None:
-            print_log(f"Warning: Got empty frame at frame_id {frame_id}", logger='current', level=logging.WARN)
+            print(f"Warning: Got empty frame at frame_id {frame_id}")
             continue
 
         # Get detections for the current frame
@@ -187,7 +186,7 @@ def main():
                  result_with_frame = np.concatenate((np.full((len(result), 1), frame_id, dtype=np.float32), result), axis=1)
                  all_results.append(result_with_frame)
         except Exception as e:
-            print_log(f"Error during inference on frame {frame_id}: {e}", logger='current', level=logging.WARN)
+            print(f"Error during inference on frame {frame_id}: {e}")
             # Decide whether to continue or stop on error
 
         processed_frames += 1
@@ -196,11 +195,11 @@ def main():
         #     print_log("Debug limit reached.", logger='current')
         #     break
 
-    print_log(f"Finished processing {processed_frames} frames.", logger='current')
+    print(f"Finished processing {processed_frames} frames.")
 
     # --- Save Results ---
     if not all_results:
-        print_log("No results generated to save.", logger='current', level=logging.WARN)
+        print("No results generated to save.")
         # Create an empty file or just don't save anything
         # open(args.output_path, 'w').close() # Example: create empty file
     else:
@@ -208,11 +207,11 @@ def main():
             all_results_np = np.concatenate(all_results, axis=0)
             # Save with space delimiter and sufficient precision
             np.savetxt(args.output_path, all_results_np, fmt='%.4f', delimiter=' ')
-            print_log(f"Saved {all_results_np.shape[0]} pose results to {args.output_path}", logger='current')
+            print(f"Saved {all_results_np.shape[0]} pose results to {args.output_path}")
         except Exception as e:
-            print_log(f"Error saving results to {args.output_path}: {e}", logger='current', level=logging.ERROR)
+            print(f"Error saving results to {args.output_path}: {e}")
 
-    print_log("Processing finished for this camera.", logger='current')
+    print("Processing finished for this camera.")
 
 
 if __name__ == '__main__':
