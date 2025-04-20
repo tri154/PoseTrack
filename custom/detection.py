@@ -50,3 +50,6 @@ def main():
             f.write(",".join(map(str, det)) + "\n")
     cap.release()
     print("Done!")
+
+if __name__ == "__main__":
+    main()
