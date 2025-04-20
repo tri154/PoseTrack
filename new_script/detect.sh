@@ -18,12 +18,17 @@ cpu_cores_per_gpu=2 #Kaggle CPUs.
 
 # Run detection for each video on separate GPU
 # Camera 0 → GPU 0
+
+export CUDA_VISIBLE_DEVICES=0
+python custom/prepare_model.py
+
+
 export CUDA_VISIBLE_DEVICES=0
 taskset -c 0-$((cpu_cores_per_gpu - 1)) python custom/detection.py --cam_path "$video_1" --cam_id 1 &
 
 # Camera 1 → GPU 1
 export CUDA_VISIBLE_DEVICES=1
-taskset -c $((cpu_cores_per_gpu))-$(($cpu_cores_per_gpu * 2 - 1)) python custom/detection.py --cam_path "$video_2" --cam_id 2 --device 1&
+taskset -c $((cpu_cores_per_gpu))-$(($cpu_cores_per_gpu * 2 - 1)) python custom/detection.py --cam_path "$video_2" --cam_id 2&
 
 # Wait for both processes to finish
 wait
