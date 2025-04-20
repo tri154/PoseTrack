@@ -17,7 +17,7 @@ OUTPUT_PATH_CAM2="${CUR_DIR}/custom_result/cam2_poses.txt"
 
 # Define MMPose model paths
 POSE_CONFIG="${CUR_DIR}/mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
-POSE_CHECKPOINT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
+POSE_CHECKPOINT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909 (1).pth"
 
 # Define the Python script to run
 PYTHON_SCRIPT="${CUR_DIR}/custom/pose_estimate.py"
