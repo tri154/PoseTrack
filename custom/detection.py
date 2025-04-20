@@ -41,6 +41,9 @@ def main():
             dets.append([frame_id, cls, x1, y1, x2, y2, score])
 
     #write dets to output_path
+    #create file given ouput path
+    if not os.path.exists(os.path.dirname(output_path)):
+        os.makedirs(os.path.dirname(output_path))
     with open(output_path, "w") as f:
         for det in dets:
             f.write(",".join(map(str, det)) + "\n")
