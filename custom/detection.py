@@ -5,12 +5,8 @@ import cv2
 
 
 def prepare_model(device=0):
-    print(f"Exporting YOLO model to TensorRT on GPU:{device}")
     model = YOLO(f"yolo11l.pt")
-    exported_file = model.export(format="engine", device=device)
-    new_file = f"yolo11l_{device}.engine"
-    os.rename(exported_file, new_file)
-
+    exported_file = model.export(format="engine")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,9 +17,11 @@ def main():
     args = parser.parse_args()
     output_path = args.cam_id + ".txt"
 
-    prepare_model(args.device)
+    engine_file = "yolo11l.engine"
+    if not os.path.exists(engine_file):
+        prepare_model(args.device)
 
-    tensorrt_model = YOLO(f"yolo11l_{args.device}.engine")
+    tensorrt_model = YOLO(engine_file)
 
     GST_PIPELINE = f"filesrc location={args.cam_path} ! decodebin ! videoconvert ! appsink max-buffers=1 drop=true"
     cap = cv2.VideoCapture(GST_PIPELINE, cv2.CAP_GSTREAMER)
