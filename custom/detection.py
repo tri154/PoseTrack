@@ -12,8 +12,8 @@ def prepare_model():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("cam_path", type=str)
-    parser.add_argument("cam_id", type=str)
+    parser.add_argument("--cam_path", type=str)
+    parser.add_argument("--cam_id", type=str)
 
     args = parser.parse_args()
     output_path = args.cam_id + ".txt"
@@ -29,7 +29,9 @@ def main():
     if not cap.isOpened():
         print("Cannot open connection!")
     dets = list()
+    frame_id = -1
     while cap.isOpened():
+        frame_id += 1
         ret, frame = cap.read()
 
         if not ret:
