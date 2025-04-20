@@ -41,17 +41,17 @@ trap cleanup EXIT SIGINT SIGTERM
 
 set -x
 
-# Process Camera 1 on GPU 0, CPU cores 0-1
-CUDA_VISIBLE_DEVICES=0 taskset -c 0-1 python ${PYTHON_SCRIPT} \
-    "${POSE_CONFIG}" \
-    "${POSE_CHECKPOINT}" \
-    --video-path "${VIDEO_PATH_CAM1}" \
-    --det-path "${DET_PATH_CAM1}" \
-    --output-path "${OUTPUT_PATH_CAM1}" \
-    --device cuda:0 \
-    --bbox-thr ${BBOX_THR} \
-    --kpt-thr ${KPT_THR} &
-PID_CAM1=$!
+## Process Camera 1 on GPU 0, CPU cores 0-1
+#CUDA_VISIBLE_DEVICES=0 taskset -c 0-1 python ${PYTHON_SCRIPT} \
+#    "${POSE_CONFIG}" \
+#    "${POSE_CHECKPOINT}" \
+#    --video-path "${VIDEO_PATH_CAM1}" \
+#    --det-path "${DET_PATH_CAM1}" \
+#    --output-path "${OUTPUT_PATH_CAM1}" \
+#    --device cuda:0 \
+#    --bbox-thr ${BBOX_THR} \
+#    --kpt-thr ${KPT_THR} &
+#PID_CAM1=$!
 
 # Process Camera 2 on GPU 1, CPU cores 2-3
 CUDA_VISIBLE_DEVICES=1 taskset -c 2-3 python ${PYTHON_SCRIPT} \
