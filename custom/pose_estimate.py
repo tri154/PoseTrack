@@ -81,7 +81,7 @@ def main():
     if not os.path.exists(save_root):
         os.makedirs(save_root)
 
-    print(f"Processing camera: {camera_id}")
+    print(f"Processing camera: {cam_id}")
     det_path = os.path.join(det_root, "cam" + cam_id + "_dets.txt")
     vid_path = os.path.join(vid_root, "output" + cam_id + ".mp4")
     save_path = os.path.join(save_root, "cam" + cam_id + "_poses" + ".txt")
