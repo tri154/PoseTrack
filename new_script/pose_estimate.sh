@@ -34,7 +34,7 @@ for i in "${!CAMERAS[@]}"; do
   python custom/pose_estimate.py \
     $CONFIG \
     $CKPT \
-    --camera_id $(i+1) \
+    --camera_id $((i+1)) \
     --det-root $DET_ROOT \
     --vid-root $VID_ROOT \
     --save-root $SAVE_ROOT \
