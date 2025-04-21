@@ -1,94 +1,53 @@
 #!/usr/bin/env bash
 
-# --- Configuration ---
-
-# Get current working directory
-CUR_DIR="$(pwd)"
-
-# Camera 1
-VIDEO_PATH_CAM1="/kaggle/input/test-video/TestVideo/output1.mp4"
-DET_PATH_CAM1="${CUR_DIR}/custom_result/cam1_dets.txt"
-OUTPUT_PATH_CAM1="${CUR_DIR}/custom_result/cam1_poses.txt"
-
-# Camera 2
-VIDEO_PATH_CAM2="/kaggle/input/test-video/TestVideo/output2.mp4"
-DET_PATH_CAM2="${CUR_DIR}/custom_result/cam2_dets.txt"
-OUTPUT_PATH_CAM2="${CUR_DIR}/custom_result/cam2_poses.txt"
-
-# Define MMPose model paths
-POSE_CONFIG="${CUR_DIR}/mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
-POSE_CHECKPOINT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909 (1).pth"
-
-# Define the Python script to run
-PYTHON_SCRIPT="${CUR_DIR}/custom/pose_estimate.py"
-
-# Optional: Define other parameters
-BBOX_THR=0.3
-KPT_THR=0.3
-
-# --- Execution ---
-
+# Register a function to be called on exit
 function cleanup {
-  echo "Cleaning up background processes..."
-  PIDS=$(jobs -p)
-  if [[ -n "$PIDS" ]]; then
-    kill $PIDS 2>/dev/null
-  fi
-  echo "Cleanup done."
+  echo "Cleaning up..."
+  pkill -P $$ # Kill all child processes of this script
 }
 
-trap cleanup EXIT SIGINT SIGTERM
+trap cleanup EXIT
+
+
 
 set -x
+CUR_DIR="$(pwd)"
+CONFIG="mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
+CKPT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909 (1).pth"
+# Specify scene and cameras
+CAMERAS=("c01" "c02")  # Change these to your camera names
 
-## Process Camera 1 on GPU 0, CPU cores 0-1
-#CUDA_VISIBLE_DEVICES=0 taskset -c 0-1 python ${PYTHON_SCRIPT} \
-#    "${POSE_CONFIG}" \
-#    "${POSE_CHECKPOINT}" \
-#    --video-path "${VIDEO_PATH_CAM1}" \
-#    --det-path "${DET_PATH_CAM1}" \
-#    --output-path "${OUTPUT_PATH_CAM1}" \
-#    --device cuda:0 \
-#    --bbox-thr ${BBOX_THR} \
-#    --kpt-thr ${KPT_THR} &
-#PID_CAM1=$!
+# Specify paths
+DET_ROOT="${CUR_DIR}/custom_result/"  # Path to detection results
+VID_ROOT="/kaggle/input/test-video/TestVideo/"  # Path to video files
+SAVE_ROOT="${CUR_DIR}/custom_result/"  # Path to save pose estimation results
 
-# Process Camera 2 on GPU 1, CPU cores 2-3
-CUDA_VISIBLE_DEVICES=1 taskset -c 2-3 python ${PYTHON_SCRIPT} \
-    "${POSE_CONFIG}" \
-    "${POSE_CHECKPOINT}" \
-    --video-path "${VIDEO_PATH_CAM2}" \
-    --det-path "${DET_PATH_CAM2}" \
-    --output-path "${OUTPUT_PATH_CAM2}" \
+# Process each camera on a separate GPU
+for i in "${!CAMERAS[@]}"; do
+  # Assign GPU ID (alternating between 0 and 1)
+  GPU_ID=$i  # This will be 0 for first camera, 1 for second camera
+
+  # Set GPU device for this process
+  export CUDA_VISIBLE_DEVICES=$GPU_ID
+
+#   Run pose estimation for this camera in the background
+  python custom\pose_estimate.py \
+    $CONFIG \
+    $CKPT \
+    --camera_id $i \
+    --det-root $DET_ROOT \
+    --vid-root $VID_ROOT \
+    --save-root $SAVE_ROOT \
     --device cuda:0 \
-    --bbox-thr ${BBOX_THR} \
-    --kpt-thr ${KPT_THR} &
-PID_CAM2=$!
+    &
 
-echo "Launched background processes:"
-echo "  Camera 1 (PID ${PID_CAM1}) on GPU 0 / Cores 0-1"
-echo "  Camera 2 (PID ${PID_CAM2}) on GPU 1 / Cores 2-3"
-echo "Waiting for both processes to complete..."
+  echo "Started processing camera ${CAMERAS[$i]} on GPU $GPU_ID"
 
-wait ${PID_CAM1}
-EXIT_STATUS_1=$?
-wait ${PID_CAM2}
-EXIT_STATUS_2=$?
+  # Sleep briefly to avoid initialization conflicts
+  sleep 2
+done
 
-set +x
+# Wait for all background processes to complete
+wait
 
-if [ ${EXIT_STATUS_1} -ne 0 ]; then
-    echo "Error: Camera 1 process (PID ${PID_CAM1}) failed with exit status ${EXIT_STATUS_1}."
-fi
-if [ ${EXIT_STATUS_2} -ne 0 ]; then
-    echo "Error: Camera 2 process (PID ${PID_CAM2}) failed with exit status ${EXIT_STATUS_2}."
-fi
-
-if [ ${EXIT_STATUS_1} -eq 0 ] && [ ${EXIT_STATUS_2} -eq 0 ]; then
-    echo "Both processes completed successfully."
-else
-    echo "One or both processes failed."
-    exit 1
-fi
-
-echo "Script finished."
+echo "All pose estimation tasks completed."
