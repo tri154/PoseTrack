@@ -73,7 +73,7 @@ def main():
         cfg_options=dict(
             model=dict(test_cfg=dict(output_heatmaps=False))))
 
-    camera_id = args.camera_id
+    cam_id = args.camera_id
     det_root = args.det_root
     vid_root = args.vid_root
     save_root = args.save_root
