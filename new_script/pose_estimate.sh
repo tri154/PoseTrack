@@ -13,7 +13,7 @@ trap cleanup EXIT
 set -x
 CUR_DIR="$(pwd)"
 CONFIG="mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
-CKPT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909 (1).pth"
+CKPT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909.pth"
 # Specify scene and cameras
 CAMERAS=("c01" "c02")  # Change these to your camera names
 
