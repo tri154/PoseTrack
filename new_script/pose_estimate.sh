@@ -31,7 +31,7 @@ for i in "${!CAMERAS[@]}"; do
   export CUDA_VISIBLE_DEVICES=$GPU_ID
 
 #   Run pose estimation for this camera in the background
-  python custom\pose_estimate.py \
+  python custom/pose_estimate.py \
     $CONFIG \
     $CKPT \
     --camera_id $i \
