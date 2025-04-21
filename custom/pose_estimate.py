@@ -78,16 +78,13 @@ def main():
     vid_root = args.vid_root
     save_root = args.save_root
 
-    # Create save directory if it doesn't exist
-    save_dir = os.path.join(save_root, scene)
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
+    if not os.path.exists(save_root):
+        os.makedirs(save_root)
 
     print(f"Processing camera: {camera_id}")
     det_path = os.path.join(det_root, "cam" + cam_id + "_dets.txt")
     vid_path = os.path.join(vid_root, "output" + cam_id + ".mp4")
-    save_path = os.path.join(save_dir, "cam" + cam_id + "_poses" + ".txt")
+    save_path = os.path.join(save_root, "cam" + cam_id + "_poses" + ".txt")
 
     # Skip if result already exists
     if os.path.exists(save_path):
