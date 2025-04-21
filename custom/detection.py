@@ -18,7 +18,8 @@ def main():
 
     tensorrt_model = YOLO("yolo11l.engine")
 
-    GST_PIPELINE = f"filesrc location={args.cam_path} ! decodebin ! videoconvert ! appsink max-buffers=1 drop=true"
+    # GST_PIPELINE = f"filesrc location={args.cam_path} ! decodebin ! videoconvert ! appsink max-buffers=1 drop=true"
+    GST_PIPELINE = f"filesrc location={args.cam_path}! decodebin ! videoconvert ! appsink"
     cap = cv2.VideoCapture(GST_PIPELINE, cv2.CAP_GSTREAMER)
     if not cap.isOpened():
         print("Cannot open connection!")
