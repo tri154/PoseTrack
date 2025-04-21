@@ -8,8 +8,6 @@ function cleanup {
 
 trap cleanup EXIT
 
-
-
 set -x
 CUR_DIR="$(pwd)"
 CONFIG="mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
@@ -27,11 +25,16 @@ for i in "${!CAMERAS[@]}"; do
   # Assign GPU ID (alternating between 0 and 1)
   GPU_ID=$i  # This will be 0 for first camera, 1 for second camera
 
+  # Assign CPU cores - 2 cores per task
+  # First task: cores 0-1, Second task: cores 2-3
+  CPU_START=$((i*2))
+  CPU_END=$((i*2+1))  # Each task gets 2 cores
+
   # Set GPU device for this process
   export CUDA_VISIBLE_DEVICES=$GPU_ID
 
-#   Run pose estimation for this camera in the background
-  python custom/pose_estimate.py \
+  # Run pose estimation for this camera in the background with taskset
+  taskset -c ${CPU_START}-${CPU_END} python custom/pose_estimate.py \
     $CONFIG \
     $CKPT \
     --camera_id $((i+1)) \
@@ -41,7 +44,7 @@ for i in "${!CAMERAS[@]}"; do
     --device cuda:0 \
     &
 
-  echo "Started processing camera ${CAMERAS[$i]} on GPU $GPU_ID"
+  echo "Started processing camera ${CAMERAS[$i]} on GPU $GPU_ID with CPU cores ${CPU_START}-${CPU_END}"
 
   # Sleep briefly to avoid initialization conflicts
   sleep 2
