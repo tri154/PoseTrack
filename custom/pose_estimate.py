@@ -48,7 +48,7 @@ def main():
     parser.add_argument('pose_config', help='Config file for pose')
     parser.add_argument('pose_checkpoint', help='Checkpoint file for pose')
     parser.add_argument(
-        '--camera_id', type=str, nargs='+', required=True,
+        '--camera_id', type=str, required=True,
         help='Camera id.')
     parser.add_argument(
         '--det-root', type=str, required=True,
@@ -88,7 +88,7 @@ def main():
 
     # Skip if result already exists
     if os.path.exists(save_path):
-        print(f"Results for {cam} already exist, skipping...")
+        print(f"Results for {cam_id} already exist, skipping...")
 
     # Check if detection and video files exist
     if not os.path.exists(det_path):
@@ -121,7 +121,7 @@ def main():
         np.savetxt(save_path, all_results)
         print(f"Results saved to: {save_path}")
     else:
-        print(f"No results found for {cam}")
+        print(f"No results found for {cam_id}")
 
 
 if __name__ == '__main__':
