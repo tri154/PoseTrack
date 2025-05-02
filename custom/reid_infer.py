@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import mmcv
 from tqdm import tqdm
 import os
-
+import fast-reid.fastreid as fastreid
 
 class reid_inferencer():
     def __init__(self, reid):
