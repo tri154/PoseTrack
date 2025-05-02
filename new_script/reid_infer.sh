@@ -7,12 +7,10 @@ function cleanup {
 }
 
 trap cleanup EXIT
-
 set -x
 CUR_DIR="$(pwd)"
 CKPT="/kaggle/input/re-id-model/aic24.pkl"
 CAMERAS=("c01" "c02")
-
 
 DET_ROOT="${CUR_DIR}/custom_result/"
 VID_ROOT="/kaggle/input/test-video/TestVideo/"

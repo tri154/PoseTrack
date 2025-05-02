@@ -5,7 +5,9 @@ from argparse import ArgumentParser
 import mmcv
 from tqdm import tqdm
 import os
-import fast-reid.fastreid as fastreid
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'fast-reid')))
+print("\n".join(sys.path))
 
 class reid_inferencer():
     def __init__(self, reid):
