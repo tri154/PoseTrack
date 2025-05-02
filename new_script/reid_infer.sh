@@ -8,6 +8,8 @@ function cleanup {
 
 trap cleanup EXIT
 
+cd fast-reid
+
 set -x
 CUR_DIR="$(pwd)"
 CKPT="/kaggle/input/re-id-model/aic24.pkl"
@@ -27,7 +29,7 @@ for i in "${!CAMERAS[@]}"; do
 
   export CUDA_VISIBLE_DEVICES=$GPU_ID
 
-  taskset -c ${CPU_START}-${CPU_END} python custom/reid_infer.py \
+  taskset -c ${CPU_START}-${CPU_END} python ../custom/reid_infer.py \
     --cam_id $((i+1)) \
     --det_root $DET_ROOT \
     --vid_root $VID_ROOT \
