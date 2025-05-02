@@ -6,7 +6,9 @@ import mmcv
 from tqdm import tqdm
 import os
 import sys
-print("\n".join(sys.path))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),'..', 'fast-reid')))
+print(sys.path[0])
+
 
 class reid_inferencer():
     def __init__(self, reid):
