@@ -5,7 +5,8 @@ from argparse import ArgumentParser
 import mmcv
 from tqdm import tqdm
 import os
-
+import sys
+print("\n".join(sys.path))
 
 class reid_inferencer():
     def __init__(self, reid):
