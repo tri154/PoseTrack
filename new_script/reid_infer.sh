@@ -10,8 +10,7 @@ trap cleanup EXIT
 
 set -x
 CUR_DIR="$(pwd)"
-CONFIG="mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
-CKPT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909.pth"
+CKPT="/kaggle/input/re-id-model/aic24.pkl"
 CAMERAS=("c01" "c02")
 
 
@@ -28,14 +27,12 @@ for i in "${!CAMERAS[@]}"; do
 
   export CUDA_VISIBLE_DEVICES=$GPU_ID
 
-  taskset -c ${CPU_START}-${CPU_END} python custom/pose_estimate.py \
-    $CONFIG \
-    $CKPT \
+  taskset -c ${CPU_START}-${CPU_END} python custom/reid_infer.py \
     --camera_id $((i+1)) \
     --det-root $DET_ROOT \
     --vid-root $VID_ROOT \
     --save-root $SAVE_ROOT \
-    --device cuda:0 \
+    --ckpt_path $CKPT \
     &
 
   echo "Started processing camera ${CAMERAS[$i]} on GPU $GPU_ID with CPU cores ${CPU_START}-${CPU_END}"
