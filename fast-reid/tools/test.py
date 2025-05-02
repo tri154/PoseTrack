@@ -1,3 +1,2 @@
-from fast-reid.fastreid import *
-
+from fastreid import *
 print("hello world")
