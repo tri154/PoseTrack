@@ -28,10 +28,10 @@ for i in "${!CAMERAS[@]}"; do
   export CUDA_VISIBLE_DEVICES=$GPU_ID
 
   taskset -c ${CPU_START}-${CPU_END} python custom/reid_infer.py \
-    --camera_id $((i+1)) \
-    --det-root $DET_ROOT \
-    --vid-root $VID_ROOT \
-    --save-root $SAVE_ROOT \
+    --cam_id $((i+1)) \
+    --det_root $DET_ROOT \
+    --vid_root $VID_ROOT \
+    --save_root $SAVE_ROOT \
     --ckpt_path $CKPT \
     &
 
