@@ -109,7 +109,7 @@ def main():
         bboxes_s[:, 3] = y2
 
         if len(bboxes_s) == 0:
-            return
+            continue
         with torch.no_grad():
             feat_sim = reid_model.process_frame_simplified(frame, bboxes_s[:, :-1])
 
