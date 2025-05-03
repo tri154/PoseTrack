@@ -10,8 +10,12 @@ trap cleanup EXIT
 set -x  # Print commands as they run
 
 # Define your camera video inputs
-video_1="/kaggle/input/test-video/TestVideo/output1.mp4"
-video_2="/kaggle/input/test-video/TestVideo/output2.mp4"
+#video_1="/kaggle/input/test-video/TestVideo/output1.mp4"
+#video_2="/kaggle/input/test-video/TestVideo/output2.mp4"
+
+video_1="/kaggle/input/aic2024-sample/cam1-537/537.mp4"
+video_2="/kaggle/input/aic2024-sample/cam2-543/543.mp4"
+
 
 # CPU binding configuration (optional)
 cpu_cores_per_gpu=2 #Kaggle CPUs.

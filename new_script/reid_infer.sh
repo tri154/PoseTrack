@@ -13,7 +13,8 @@ CKPT="/kaggle/input/re-id-model/aic24.pkl"
 CAMERAS=("c01" "c02")
 #CAMERAS=("c01")
 DET_ROOT="${CUR_DIR}/custom_result/"
-VID_ROOT="/kaggle/input/test-video/TestVideo/"
+#VID_ROOT="/kaggle/input/test-video/TestVideo/"
+VID_ROOT='/kaggle/input/aic2024-sample/'
 SAVE_ROOT="${CUR_DIR}/custom_result/"
 
 

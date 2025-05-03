@@ -11,7 +11,7 @@ trap cleanup EXIT
 set -x
 CUR_DIR="$(pwd)"
 RESULT_ROOT="${CUR_DIR}/custom_result/"
-CAL_ROOT="/kaggle/input/aic2024-sample"
+CAL_ROOT="/kaggle/input/aic2024-sample/"
 SAVE_ROOT="${CUR_DIR}/custom_result/"
 
 
