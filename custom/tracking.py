@@ -3,8 +3,7 @@ import os.path as osp
 import numpy as np
 from tqdm import tqdm
 
-from util.camera import Camera
-from Tracker.PoseTracker import Detection_Sample, PoseTracker,TrackState
+
 
 import os
 import sys
@@ -12,6 +11,8 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),'..', 'track')))
 print(sys.path[0])
 
+from util.camera import Camera
+from Tracker.PoseTracker import Detection_Sample, PoseTracker,TrackState
 
 def main():
     parser = ArgumentParser()
