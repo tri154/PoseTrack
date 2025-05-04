@@ -73,9 +73,9 @@ def main():
 
     # vid_path = os.path.join(args.vid_root, f"output{cam_id}.mp4")
     vid_path = ""
-    if cam_id == 1:
+    if cam_id == '1':
         vid_path = os.path.join(args.vid_root, 'cam1-537', '537.mp4')
-    elif cam_id == 2:
+    elif cam_id == '2':
         vid_path = os.path.join(args.vid_root, 'cam2-543', '543.mp4')
 
     save_path = os.path.join(args.save_root, f"cam{cam_id}_reid.npy")
