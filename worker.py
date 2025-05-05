@@ -5,7 +5,8 @@ import numpy as np
 from custom.pose_estimate import infer_one_image, get_pose_estimator
 from custom.reid_infer import get_reid_model
 import torch
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),'..', 'track')))
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'track')))
 
 from Tracker.PoseTracker import Detection_Sample, PoseTracker,TrackState
 screen_width = 1920
