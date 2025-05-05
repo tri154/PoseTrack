@@ -14,6 +14,15 @@ print(sys.path[0])
 from util.camera import Camera
 from Tracker.PoseTracker import Detection_Sample, PoseTracker,TrackState
 
+
+def get_pose_tracker():
+    cals = []
+    cal_dir = "/kaggle/input/aic2024-sample/"
+    cals.append(Camera(osp.join(cal_dir, 'cam1-537', "calibration.json")))
+    cals.append(Camera(osp.join(cal_dir, 'cam2-543', "calibration.json")))
+    tracker = PoseTracker(cals)
+    return tracker
+
 def main():
     parser = ArgumentParser()
     parser.add_argument("--result_root", type=str, default="")

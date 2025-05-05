@@ -28,6 +28,9 @@ try:
 except (ImportError, ModuleNotFoundError):
     has_mmdet = False
 
+CONFIG="mmpose/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py"
+CKPT="/kaggle/input/ckpt-model/td-hm_hrnet-w32_8xb64-210e_coco-256x192-81c58e40_20220909.pth"
+
 
 def infer_one_image(args, frame, bboxes_s, pose_estimator):
     pose_results = inference_topdown(pose_estimator, frame, bboxes_s[:, :4])
@@ -40,6 +43,15 @@ def infer_one_image(args, frame, bboxes_s, pose_estimator):
     records = np.array(records)
     records = np.concatenate((bboxes_s, records), axis=1)
     return records
+
+def get_pose_estimator():
+    pose_estimator = init_pose_estimator(
+        CONFIG,
+        CKPT,
+        device='cuda:0',
+        cfg_options=dict(
+            model=dict(test_cfg=dict(output_heatmaps=False))))
+    return pose_estimator
 
 
 def main():
@@ -123,12 +135,8 @@ def main():
         all_results.append(result)
 
     # Save results
-    if all_results:
-        all_results = np.concatenate(all_results)
-        np.savetxt(save_path, all_results)
-        print(f"Results saved to: {save_path}")
-    else:
-        print(f"No results found for {cam_id}")
+    all_results = np.concatenate(all_results)
+    np.savetxt(save_path, all_results)
 
 
 if __name__ == '__main__':

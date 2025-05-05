@@ -59,6 +59,13 @@ class reid_inferencer():
 
         return newfeats
 
+CKPT="/kaggle/input/re-id-model/aic24.pkl"
+
+def get_reid_model():
+    reid=torch.load(CKPT ,map_location='cpu').cuda().eval()
+    reid_model = reid_inferencer(reid)
+    return reid_model
+
 def main():
     parser = ArgumentParser()
     parser.add_argument("--cam_id", type=int, default=0)
