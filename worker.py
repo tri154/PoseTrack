@@ -81,17 +81,17 @@ def process_video(cam_id, cam_path, gpu_id, queue):
                                           frame_id=frame_id)
             detection_sample_sv.append(new_sample)
         print(f"Done frame {frame_id}")
-        queue.put({
-            "is_end": False,
-            "camera_id": gpu_id,
-            "frame_id": frame_id,
-            "detection_samples": detection_sample_sv,
-        })
+        # queue.put({
+        #     "is_end": False,
+        #     "camera_id": gpu_id,
+        #     "frame_id": frame_id,
+        #     "detection_samples": detection_sample_sv,
+        # })
     
     cap.release()
-    queue.put({
-        "is_end": True
-    })
+    # queue.put({
+    #     "is_end": True
+    # })
 
 if __name__ == '__main__':
     q0 = Queue()
