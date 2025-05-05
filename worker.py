@@ -80,14 +80,14 @@ def process_video(cam_id, cam_path, gpu_id, queue):
             new_sample = Detection_Sample(bbox=det[2:], keypoints_2d=pose[6:].reshape(17, 3), reid_feat=reid, cam_id=cam_id,
                                           frame_id=frame_id)
             detection_sample_sv.append(new_sample)
-
+        print(f"Done frame {frame_id}")
         queue.put({
             "is_end": False,
             "camera_id": gpu_id,
             "frame_id": frame_id,
             "detection_samples": detection_sample_sv,
         })
-
+    
     cap.release()
     queue.put({
         "is_end": True
