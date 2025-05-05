@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'trac
 from Tracker.PoseTracker import Detection_Sample, PoseTracker,TrackState
 screen_width = 1920
 screen_height = 1080
+from multiprocessing import Process, Queue
 
 
 def process_video(cam_id, cam_path, gpu_id, queue):
@@ -91,3 +92,7 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     queue.put({
         "is_end": True
     })
+
+if __name__ == '__main__':
+    q0 = Queue()
+    process_video(0, "/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4", 0, q0)
