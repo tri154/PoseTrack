@@ -45,8 +45,8 @@ def main():
             try:
                 with open(SAVE_PATH, 'a') as f:
                     for row in frame_results:
-                        logging(log_file, row.shape)
                         np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                    f.write('\n')
             except Exception as e:
                 logging(log_file, str(e))
             # results += frame_results
