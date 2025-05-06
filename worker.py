@@ -18,14 +18,17 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     log_file = f"progress_log_cam{cam_id}.txt"
     logging(log_file, "start processing")
-    engine_file = "yolo11l.engine"
-    #detection model
-    tensorrt_model = YOLO(engine_file)
-    #pose estimation model
-    pose_estimator = get_pose_estimator()
+    try:
+        engine_file = "yolo11l.engine"
+        #detection model
+        tensorrt_model = YOLO(engine_file)
+        #pose estimation model
+        pose_estimator = get_pose_estimator()
+        #reid model
+        reid_model = get_reid_model()
+    except Exception as e:
+        logging(log_file, str(e))
 
-    #reid model
-    reid_model = get_reid_model()
     logging(log_file, "loaded model")
 
     GST_PIPELINE = f"filesrc location={cam_path} ! decodebin ! videoconvert ! appsink"
