@@ -42,9 +42,12 @@ def main():
             detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
             pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
             frame_results = pose_tracker.output(frame_id)
-            with open(SAVE_PATH, 'a') as f:
-                for row in frame_results:
-                    np.savetxt(f, [row[:-1]], fmt='%d %d %d %d %d %d %d %f %f')
+            try:
+                with open(SAVE_PATH, 'a') as f:
+                    for row in frame_results:
+                        np.savetxt(f, [row[:-1]], fmt='%d %d %d %d %d %d %d %f %f')
+            except Exception as e:
+                logging(log_file, str(e))
             # results += frame_results
             logging(log_file, f"Done {frame_id}")
     p0.join()
