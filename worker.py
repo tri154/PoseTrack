@@ -59,6 +59,8 @@ def process_video(cam_id, cam_path, gpu_id, queue):
             dets.append([frame_id, cls, x1, y1, x2, y2, score])
 
         dets = np.array(dets)
+        logging(log_file, "detected")
+
 
         #POSE estimate
         bboxes_s = dets[:, 2:7]  # x1y1x2y2s
@@ -72,6 +74,7 @@ def process_video(cam_id, cam_path, gpu_id, queue):
 
         pose_result = infer_one_image(None, frame, bboxes_s, pose_estimator)
         pose_result = np.concatenate((np.ones((len(pose_result), 1)) * frame_id, pose_result.astype(np.float32)), axis=1)
+        logging(log_file, "estimated pose")
 
         #reid
         bboxes_s = dets[:, 2:7]  # x1y1x2y2s
@@ -91,6 +94,9 @@ def process_video(cam_id, cam_path, gpu_id, queue):
         bboxes_s[:, 3] = y2
         with torch.no_grad():
             feat_sim = reid_model.process_frame_simplified(frame, bboxes_s[:, :-1])
+
+        logging(log_file, "reid-ed")
+
 
         box_thred = 0.3
         detection_sample_sv = []
