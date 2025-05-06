@@ -61,7 +61,7 @@ class reid_inferencer():
 
 CKPT="/kaggle/input/re-id-model/aic24.pkl"
 
-def get_reid_model(gpu_id):
+def get_reid_model(gpu_id='cuda:0'):
     reid=torch.load(CKPT ,map_location='cpu').to(gpu_id).eval()
     reid_model = reid_inferencer(reid)
     return reid_model

@@ -44,7 +44,7 @@ def infer_one_image(args, frame, bboxes_s, pose_estimator):
     records = np.concatenate((bboxes_s, records), axis=1)
     return records
 
-def get_pose_estimator(device):
+def get_pose_estimator(device='cuda:0'):
     pose_estimator = init_pose_estimator(
         CONFIG,
         CKPT,
