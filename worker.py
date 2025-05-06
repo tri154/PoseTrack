@@ -18,7 +18,7 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     engine_file = "yolo11l.engine"
     #detection model
-    tensorrt_model = YOLO(engine_file)
+    tensorrt_model = YOLO(engine_file).to(gpu_id)
     #pose estimation model
     pose_estimator = get_pose_estimator()
 
@@ -34,6 +34,8 @@ def process_video(cam_id, cam_path, gpu_id, queue):
         if not ret:
             break
         frame_id += 1
+        with open(f"progress_log_cam{cam_id}.txt", "a") as f:
+            f.write(f"Start {frame_id}\n")
 
         det_results = tensorrt_model(frame, classes=[0])[0]
         dets = list()
@@ -92,6 +94,8 @@ def process_video(cam_id, cam_path, gpu_id, queue):
             "frame_id": frame_id,
             "detection_samples": detection_sample_sv,
         })
+        with open(f"progress_log_cam{cam_id}.txt", "a") as f:
+            f.write(f"Done {frame_id}\n")
     
     cap.release()
     queue.put({

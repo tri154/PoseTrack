@@ -35,6 +35,8 @@ def main():
             pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
             frame_results = pose_tracker.output(frame_id)
             results += frame_results
+            with open("progress_log.txt", "a") as f:
+                f.write(f"Done {frame_id}\n")
     p0.join()
     p1.join()
     results = np.concatenate(results,axis=0)
