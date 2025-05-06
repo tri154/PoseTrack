@@ -1,4 +1,6 @@
 from multiprocessing import Process, Queue
+import multiprocessing as mp
+mp.set_start_method('spawn', force=True)
 from worker import process_video
 import os
 from custom.prepare_model import prepare_model
