@@ -19,17 +19,17 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     logging(log_file, "start processing")
     try:
         torch.cuda.set_device(gpu_id)
-        engine_file = "yolo11n.pt"
+        engine_file = "yolo11l.engine"
         #detection model
         tensorrt_model = YOLO(engine_file)
         logging(log_file, "Done detection")
 
         #pose estimation model
-        pose_estimator = get_pose_estimator(gpu_id)
+        pose_estimator = get_pose_estimator()
         logging(log_file, "Done pose")
 
         #reid model
-        reid_model = get_reid_model(gpu_id)
+        reid_model = get_reid_model()
         logging(log_file, "Done reid")
 
     except Exception as e:
