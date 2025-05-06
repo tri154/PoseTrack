@@ -29,6 +29,9 @@ def main():
     results = []
 
     log_file = "progress_log.txt"
+
+    import time
+    start_time = time.time()
     while True:
         if not q0.empty() and not q1.empty():
             cam1_data = q0.get()
@@ -46,6 +49,9 @@ def main():
             logging(log_file, f"Done {frame_id}")
     p0.join()
     p1.join()
+    end_time = time.time()
+    fps = frame_id / (end_time - start_time)
+    logging(log_file, f"FPS: {fps}")
     # results = np.concatenate(results,axis=0)
     # sort_idx = np.lexsort((results[:,2],results[:,0]))
     # results = np.ascontiguousarray(results[sort_idx])
