@@ -44,11 +44,11 @@ def infer_one_image(args, frame, bboxes_s, pose_estimator):
     records = np.concatenate((bboxes_s, records), axis=1)
     return records
 
-def get_pose_estimator():
+def get_pose_estimator(device):
     pose_estimator = init_pose_estimator(
         CONFIG,
         CKPT,
-        device='cuda:0',
+        device=device,
         cfg_options=dict(
             model=dict(test_cfg=dict(output_heatmaps=False))))
     return pose_estimator
