@@ -32,21 +32,21 @@ def main():
 
     import time
     start_time = time.time()
-    while True:
-        if not q0.empty() and not q1.empty():
-            cam1_data = q0.get()
-            cam2_data = q1.get()
-            if cam1_data['is_end'] or cam2_data['is_end']:
-                break
-            frame_id = cam1_data["frame_id"]
-            detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
-            pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
-            frame_results = pose_tracker.output(frame_id)
-            with open(SAVE_PATH, 'a') as f_out:
+    with open(SAVE_PATH, 'a') as f_out:
+        while True:
+            if not q0.empty() and not q1.empty():
+                cam1_data = q0.get()
+                cam2_data = q1.get()
+                if cam1_data['is_end'] or cam2_data['is_end']:
+                    break
+                frame_id = cam1_data["frame_id"]
+                detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
+                pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
+                frame_results = pose_tracker.output(frame_id)
                 for row in frame_results:
                     np.savetxt(f_out, [row[:-1]], fmt='%d %d %d %d %d %d %d %f %f')
-            # results += frame_results
-            logging(log_file, f"Done {frame_id}")
+                # results += frame_results
+                logging(log_file, f"Done {frame_id}")
     p0.join()
     p1.join()
     end_time = time.time()
