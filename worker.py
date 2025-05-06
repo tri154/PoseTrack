@@ -20,7 +20,7 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     try:
         engine_file = "yolo11l.pt"
         #detection model
-        tensorrt_model = YOLO(engine_file)
+        tensorrt_model = YOLO(engine_file).to(f'cuda:{gpu_id}')
         logging(log_file, "Done detection")
 
         #pose estimation model
