@@ -48,7 +48,12 @@ def process_video(cam_id, cam_path, gpu_id, queue):
         #POSE estimate
         bboxes_s = dets[:, 2:7]  # x1y1x2y2s
         if len(bboxes_s) == 0:  # need to do smthing
-            continue
+            queue.put({
+                "is_end": False,
+                "camera_id": gpu_id,
+                "frame_id": frame_id,
+                "detection_samples": [],
+            })
 
         pose_result = infer_one_image(None, frame, bboxes_s, pose_estimator)
         pose_result = np.concatenate((np.ones((len(pose_result), 1)) * frame_id, pose_result.astype(np.float32)), axis=1)
