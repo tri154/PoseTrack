@@ -39,14 +39,17 @@ def main():
             detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
             pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
             frame_results = pose_tracker.output(frame_id)
-            results += frame_results
+            with open(SAVE_PATH, 'a') as f_out:
+                for row in frame_results:
+                    np.savetxt(f_out, [row[:-1]], fmt='%d %d %d %d %d %d %d %f %f')
+            # results += frame_results
             logging(log_file, f"Done {frame_id}")
     p0.join()
     p1.join()
-    results = np.concatenate(results,axis=0)
-    sort_idx = np.lexsort((results[:,2],results[:,0]))
-    results = np.ascontiguousarray(results[sort_idx])
-    np.savetxt(SAVE_PATH, results)
+    # results = np.concatenate(results,axis=0)
+    # sort_idx = np.lexsort((results[:,2],results[:,0]))
+    # results = np.ascontiguousarray(results[sort_idx])
+    # np.savetxt(SAVE_PATH, results)
 
 if __name__ == "__main__":
     main()
