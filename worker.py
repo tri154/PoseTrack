@@ -18,7 +18,7 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     log_file = f"progress_log_cam{cam_id}.txt"
     logging(log_file, "start processing")
     try:
-        torch.cuda.set_device(gpu_id)
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
         engine_file = "yolo11l.engine"
         #detection model
         tensorrt_model = YOLO(engine_file)
