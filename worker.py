@@ -12,19 +12,21 @@ from Tracker.PoseTracker import Detection_Sample, PoseTracker,TrackState
 screen_width = 1920
 screen_height = 1080
 from multiprocessing import Process, Queue
-
+from utils import logging
 
 def process_video(cam_id, cam_path, gpu_id, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    log_file = f"progress_log_cam{cam_id}.txt"
+    logging(log_file, "start processing")
     engine_file = "yolo11l.engine"
     #detection model
-    tensorrt_model = YOLO(engine_file).to(gpu_id)
+    tensorrt_model = YOLO(engine_file)
     #pose estimation model
     pose_estimator = get_pose_estimator()
 
     #reid model
     reid_model = get_reid_model()
-
+    logging(log_file, "loaded model")
 
     GST_PIPELINE = f"filesrc location={cam_path} ! decodebin ! videoconvert ! appsink"
     cap = cv2.VideoCapture(GST_PIPELINE, cv2.CAP_GSTREAMER)
@@ -34,8 +36,9 @@ def process_video(cam_id, cam_path, gpu_id, queue):
         if not ret:
             break
         frame_id += 1
-        with open(f"progress_log_cam{cam_id}.txt", "a") as f:
-            f.write(f"Start {frame_id}\n")
+
+        logging(log_file, f"Start {frame_id}")
+
 
         det_results = tensorrt_model(frame, classes=[0])[0]
         dets = list()
@@ -87,15 +90,15 @@ def process_video(cam_id, cam_path, gpu_id, queue):
             new_sample = Detection_Sample(bbox=det[2:], keypoints_2d=pose[6:].reshape(17, 3), reid_feat=reid, cam_id=cam_id,
                                           frame_id=frame_id)
             detection_sample_sv.append(new_sample)
-        print(f"Done frame {frame_id}")
         queue.put({
             "is_end": False,
             "camera_id": gpu_id,
             "frame_id": frame_id,
             "detection_samples": detection_sample_sv,
         })
-        with open(f"progress_log_cam{cam_id}.txt", "a") as f:
-            f.write(f"Done {frame_id}\n")
+        logging(log_file, f"Done {frame_id}")
+
+
     
     cap.release()
     queue.put({

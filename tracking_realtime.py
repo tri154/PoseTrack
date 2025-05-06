@@ -7,6 +7,7 @@ import numpy as np
 VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
 VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
 SAVE_PATH="/kaggle/working/PoseTrack/custom_result/track_results.txt"
+from utils import logging
 def main():
 
     engine_file = "yolo11l.engine"
@@ -24,6 +25,8 @@ def main():
     p0.start()
     p1.start()
     results = []
+
+    log_file = "progress_log.txt"
     while True:
         if not q0.empty() and not q1.empty():
             cam1_data = q0.get()
@@ -35,8 +38,7 @@ def main():
             pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
             frame_results = pose_tracker.output(frame_id)
             results += frame_results
-            with open("progress_log.txt", "a") as f:
-                f.write(f"Done {frame_id}\n")
+            logging(log_file, f"Done {frame_id}")
     p0.join()
     p1.join()
     results = np.concatenate(results,axis=0)
