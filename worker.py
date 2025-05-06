@@ -13,7 +13,7 @@ screen_width = 1920
 screen_height = 1080
 from multiprocessing import Process, Queue
 from utils import logging
-
+import traceback
 def process_video(cam_id, cam_path, gpu_id, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     log_file = f"progress_log_cam{cam_id}.txt"
@@ -34,6 +34,7 @@ def process_video(cam_id, cam_path, gpu_id, queue):
 
     except Exception as e:
         logging(log_file, str(e))
+        logging(log_file, traceback.format_exc())
 
     logging(log_file, "loaded model")
 
