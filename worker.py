@@ -18,18 +18,17 @@ def process_video(cam_id, cam_path, gpu_id, queue):
     log_file = f"progress_log_cam{cam_id}.txt"
     logging(log_file, "start processing")
     try:
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
-        engine_file = "yolo11l.engine"
+        engine_file = "yolo11l.pt"
         #detection model
         tensorrt_model = YOLO(engine_file)
         logging(log_file, "Done detection")
 
         #pose estimation model
-        pose_estimator = get_pose_estimator()
+        pose_estimator = get_pose_estimator(f'cuda:{gpu_id}')
         logging(log_file, "Done pose")
 
         #reid model
-        reid_model = get_reid_model()
+        reid_model = get_reid_model(f'cuda:{gpu_id}')
         logging(log_file, "Done reid")
 
     except Exception as e:
