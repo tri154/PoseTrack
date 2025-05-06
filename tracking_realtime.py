@@ -44,8 +44,9 @@ def main():
             frame_results = pose_tracker.output(frame_id)
             try:
                 with open(SAVE_PATH, 'a') as f:
-                    for row in frame_results:
-                        np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                    np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                    # for row in frame_results:
+                    #     np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
                     f.write('\n')
             except Exception as e:
                 logging(log_file, str(e))
