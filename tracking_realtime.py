@@ -8,7 +8,7 @@ from custom.tracking import get_pose_tracker
 import numpy as np
 from kafka import KafkaProducer
 import json
-
+import traceback
 producer = KafkaProducer(
     bootstrap_servers='42.118.0.103:9092',
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
@@ -64,7 +64,8 @@ def main():
             detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
             pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
             frame_results = pose_tracker.output(frame_id)
-            logging(log_file, type(frame_results))
+            frame_results = np.array(frame_results)
+            # logging(log_file, type(frame_results))
             # except Exception as e:
             #     logging(log_file, str(e))
             try:
@@ -80,7 +81,7 @@ def main():
                 producer.send('tracking', frame_results_with_timestamp.tolist())
                 print("Sent")
             except Exception as e:
-                logging(log_file, str(e))
+                logging(log_file, str(traceback.format_exc()))
             # results += frame_results
             logging(log_file, f"Done {frame_id}")
     p0.join()
