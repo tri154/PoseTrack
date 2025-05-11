@@ -50,24 +50,24 @@ def main():
     logging(log_file, "start tracking")
     while True:
         if not q0.empty() and not q1.empty():
-            logging(log_file, "getting data")
-            cam1_data = q0.get()
-            cam2_data = q1.get()
-            if cam1_data['is_end'] or cam2_data['is_end']:
-                break
-            # try:
-            if EPOCH_START is None:
-                EPOCH_START = datetime.datetime.now(datetime.timezone.utc)
-            logging(log_file, "getting data Done")
-            frame_id = cam1_data["frame_id"]
-            timestamp = frame_id_to_timestamp(EPOCH_START, frame_id)
-            detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
-            pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
-            frame_results = pose_tracker.output(frame_id)
-            frame_results = np.array(frame_results).squeeze()
-            # except Exception as e:
-            #     logging(log_file, str(e))
             try:
+                # logging(log_file, "getting data")
+                cam1_data = q0.get()
+                cam2_data = q1.get()
+                if cam1_data['is_end'] or cam2_data['is_end']:
+                    break
+                if EPOCH_START is None:
+                    EPOCH_START = datetime.datetime.now(datetime.timezone.utc)
+                # logging(log_file, "getting data Done")
+                frame_id = cam1_data["frame_id"]
+                timestamp = frame_id_to_timestamp(EPOCH_START, frame_id)
+                detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
+                pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
+                frame_results = pose_tracker.output(frame_id)
+                if len(frame_results) == 0:
+                    continue
+                frame_results = np.array(frame_results).squeeze()
+
                 # with open(SAVE_PATH, 'a') as f:
                 #     np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
                 #     # for row in frame_results:
@@ -76,9 +76,9 @@ def main():
                 frame_results_with_timestamp = np.hstack(
                     (frame_results[:, :-1], np.full((frame_results.shape[0], 1), timestamp)))
                 # producer.send('tracking', frame_results[:, :-1].tolist())
-                logging(log_file, 'sending')
+                # logging(log_file, 'sending')
                 producer.send('tracking', frame_results_with_timestamp.tolist())
-                print("Sent")
+                # print("Sent")
             except Exception as e:
                 logging(log_file, str(traceback.format_exc()))
             # results += frame_results
