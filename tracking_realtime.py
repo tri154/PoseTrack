@@ -47,8 +47,10 @@ def main():
 
     import time
     start_time = time.time()
+    logging(log_file, "start tracking")
     while True:
         if not q0.empty() and not q1.empty():
+            logging(log_file, "getting data")
             cam1_data = q0.get()
             cam2_data = q1.get()
             if cam1_data['is_end'] or cam2_data['is_end']:
