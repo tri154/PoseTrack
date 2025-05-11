@@ -27,9 +27,9 @@ def frame_id_to_timestamp(frame_id, fps=10):
 
 from utils import logging
 def main():
-    engine_file = "yolo11l.engine"
-    if not os.path.exists(engine_file):
-        prepare_model()
+    # engine_file = "yolo11l.engine"
+    # if not os.path.exists(engine_file):
+    #     prepare_model()
 
     pose_tracker = get_pose_tracker()
 
