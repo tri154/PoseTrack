@@ -68,16 +68,16 @@ def main():
             # except Exception as e:
             #     logging(log_file, str(e))
             try:
-                # with open(SAVE_PATH, 'a') as f:
-                #     np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
-                #     # for row in frame_results:
-                #     #     np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
-                #     f.write('\n')
-                frame_results_with_timestamp = np.hstack(
-                    (frame_results[:, :-1], np.full((frame_results.shape[0], 1), timestamp)))
-                # producer.send('tracking', frame_results[:, :-1].tolist())
-                logging(log_file, 'sending')
-                producer.send('tracking', frame_results_with_timestamp.tolist())
+                with open(SAVE_PATH, 'a') as f:
+                    np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                    # for row in frame_results:
+                    #     np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                    f.write('\n')
+                # frame_results_with_timestamp = np.hstack(
+                #     (frame_results[:, :-1], np.full((frame_results.shape[0], 1), timestamp)))
+                # # producer.send('tracking', frame_results[:, :-1].tolist())
+                # logging(log_file, 'sending')
+                # producer.send('tracking', frame_results_with_timestamp.tolist())
                 print("Sent")
             except Exception as e:
                 logging(log_file, str(traceback.format_exc()))
