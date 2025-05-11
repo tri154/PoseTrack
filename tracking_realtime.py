@@ -57,6 +57,7 @@ def main():
                 break
             if EPOCH_START is None:
                 EPOCH_START = datetime.datetime.now(datetime.UTC)
+            logging(log_file, "getting data Done")
             try:
                 frame_id = cam1_data["frame_id"]
                 timestamp = frame_id_to_timestamp(frame_id)
