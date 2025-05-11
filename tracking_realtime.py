@@ -55,10 +55,10 @@ def main():
             cam2_data = q1.get()
             if cam1_data['is_end'] or cam2_data['is_end']:
                 break
-            if EPOCH_START is None:
-                EPOCH_START = datetime.datetime.now(datetime.UTC)
-            logging(log_file, "getting data Done")
             try:
+                if EPOCH_START is None:
+                    EPOCH_START = datetime.datetime.now(datetime.UTC)
+                logging(log_file, "getting data Done")
                 frame_id = cam1_data["frame_id"]
                 timestamp = frame_id_to_timestamp(frame_id)
                 detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
