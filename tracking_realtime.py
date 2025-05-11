@@ -54,6 +54,7 @@ def main():
             if cam1_data['is_end'] or cam2_data['is_end']:
                 break
             if EPOCH_START is None:
+                global EPOCH_START
                 EPOCH_START = datetime.datetime.now(datetime.UTC)
             frame_id = cam1_data["frame_id"]
             timestamp = frame_id_to_timestamp(frame_id)
