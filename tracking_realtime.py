@@ -20,9 +20,9 @@ VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
 SAVE_PATH="/kaggle/working/PoseTrack/custom_result/track_results.txt"
 
 import datetime
-EPOCH_START = None
 
-def frame_id_to_timestamp(frame_id, fps=10):
+
+def frame_id_to_timestamp(EPOCH_START, frame_id, fps=10):
     return (EPOCH_START + datetime.timedelta(seconds=frame_id / fps)).isoformat()
 
 from utils import logging
@@ -30,7 +30,7 @@ def main():
     # engine_file = "yolo11l.engine"
     # if not os.path.exists(engine_file):
     #     prepare_model()
-
+    EPOCH_START = None
     pose_tracker = get_pose_tracker()
 
     q0 = Queue()
@@ -60,7 +60,7 @@ def main():
                     EPOCH_START = datetime.datetime.now(datetime.UTC)
                 logging(log_file, "getting data Done")
                 frame_id = cam1_data["frame_id"]
-                timestamp = frame_id_to_timestamp(frame_id)
+                timestamp = frame_id_to_timestamp(EPOCH_START, frame_id)
                 detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
                 pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
                 frame_results = pose_tracker.output(frame_id)
