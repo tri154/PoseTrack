@@ -57,7 +57,7 @@ def main():
                 break
             try:
                 if EPOCH_START is None:
-                    EPOCH_START = datetime.datetime.now(datetime.UTC)
+                    EPOCH_START = datetime.datetime.now(datetime.timezone.utc)
                 logging(log_file, "getting data Done")
                 frame_id = cam1_data["frame_id"]
                 timestamp = frame_id_to_timestamp(EPOCH_START, frame_id)
