@@ -6,12 +6,27 @@ import os
 from custom.prepare_model import prepare_model
 from custom.tracking import get_pose_tracker
 import numpy as np
+from kafka import KafkaProducer
+import json
+
+producer = KafkaProducer(
+    bootstrap_servers='42.118.0.103:8557',
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+
+
 VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
 VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
 SAVE_PATH="/kaggle/working/PoseTrack/custom_result/track_results.txt"
+
+import datetime
+EPOCH_START = None
+
+def frame_id_to_timestamp(frame_id, fps=10):
+    return (EPOCH_START + datetime.timedelta(seconds=frame_id / fps)).isoformat()
+
 from utils import logging
 def main():
-
     engine_file = "yolo11l.engine"
     if not os.path.exists(engine_file):
         prepare_model()
@@ -38,22 +53,35 @@ def main():
             cam2_data = q1.get()
             if cam1_data['is_end'] or cam2_data['is_end']:
                 break
+            if EPOCH_START is None:
+                EPOCH_START = datetime.datetime.now(datetime.UTC)
             frame_id = cam1_data["frame_id"]
+            timestamp = frame_id_to_timestamp(frame_id)
             detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
             pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
             frame_results = pose_tracker.output(frame_id)
             try:
-                with open(SAVE_PATH, 'a') as f:
-                    np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
-                    # for row in frame_results:
-                    #     np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
-                    f.write('\n')
+                # with open(SAVE_PATH, 'a') as f:
+                #     np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                #     # for row in frame_results:
+                #     #     np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
+                #     f.write('\n')
+                frame_results_with_timestamp = np.hstack(
+                    (frame_results[:, :-1], np.full((frame_results.shape[0], 1), timestamp)))
+                # producer.send('tracking', frame_results[:, :-1].tolist())
+                producer.send('tracking', frame_results_with_timestamp.tolist())
+                print("Sent")
             except Exception as e:
                 logging(log_file, str(e))
             # results += frame_results
             logging(log_file, f"Done {frame_id}")
     p0.join()
     p1.join()
+
+    producer.send('tracking', "Done")
+    producer.flush()
+    producer.close()
+
     end_time = time.time()
     fps = frame_id / (end_time - start_time)
     logging(log_file, f"FPS: {fps}")
