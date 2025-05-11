@@ -55,11 +55,14 @@ def main():
                 break
             if EPOCH_START is None:
                 EPOCH_START = datetime.datetime.now(datetime.UTC)
-            frame_id = cam1_data["frame_id"]
-            timestamp = frame_id_to_timestamp(frame_id)
-            detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
-            pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
-            frame_results = pose_tracker.output(frame_id)
+            try:
+                frame_id = cam1_data["frame_id"]
+                timestamp = frame_id_to_timestamp(frame_id)
+                detection_sample_mv = [cam1_data["detection_samples"], cam2_data["detection_samples"]]
+                pose_tracker.mv_update_wo_pred(detection_sample_mv, frame_id)
+                frame_results = pose_tracker.output(frame_id)
+            except Exception as e:
+                logging(log_file, str(e))
             try:
                 # with open(SAVE_PATH, 'a') as f:
                 #     np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
