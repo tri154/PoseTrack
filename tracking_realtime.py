@@ -10,7 +10,7 @@ from kafka import KafkaProducer
 import json
 import traceback
 producer = KafkaProducer(
-    bootstrap_servers='42.118.0.103:9092',
+    bootstrap_servers='42.114.53.199:9092',
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
