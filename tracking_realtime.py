@@ -15,8 +15,10 @@ producer = KafkaProducer(
 )
 
 
-VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
-VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
+# VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
+# VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
+VIDEO_1="/kaggle/input/test-video/cam1.mp4"
+VIDEO_2="/kaggle/input/test-video/cam2.mp4"
 SAVE_PATH="/kaggle/working/PoseTrack/custom_result/track_results.txt"
 
 import datetime
