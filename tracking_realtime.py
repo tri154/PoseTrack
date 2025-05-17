@@ -68,9 +68,8 @@ def main():
                 frame_results = pose_tracker.output(frame_id)
                 if len(frame_results) == 0:
                     continue
-                frame_results = np.array(frame_results)
-                logging(log_file, frame_results.shape)
-                frame_results = frame_results.squeeze()
+                frame_results = np.array(frame_results).squeeze(axis=1)
+                # logging(log_file, frame_results.shape)
 
                 # with open(SAVE_PATH, 'a') as f:
                 #     np.savetxt(f, frame_results[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
