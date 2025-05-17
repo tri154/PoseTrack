@@ -6,7 +6,7 @@ import scipy
 
 
 class Camera():
-    def __init__(self,cal_path):
+    def __init__(self,cal_path, cam_idx=None):
         with open(cal_path, 'r') as file:
             data = json.load(file)
         self.project_mat = np.array(data["camera projection matrix"])
@@ -19,8 +19,10 @@ class Camera():
         self.homo_feet[:,-1] = self.homo_feet[:,-1] + self.project_mat[:,2]*0.15 # z=0.15
         self.homo_feet_inv = np.linalg.inv(self.homo_feet)
         # index (str) in whole dataset
-        self.idx = cal_path.split("/")[-2][-4:]
-        self.idx_int = int(self.idx)
+        # self.idx = cal_path.split("/")[-2][-4:]
+        # self.idx_int = int(self.idx)
+        self.idx_int = int(cam_idx)
+
 
 def cross(R,V):
     h = [R[1] * V[2] - R[2] * V[1],
