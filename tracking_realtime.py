@@ -38,8 +38,8 @@ def main():
     q0 = Queue()
     q1 = Queue()
 
-    p0 = Process(target=process_video, args=(0, VIDEO_1, 0, q0))
-    p1 = Process(target=process_video, args=(1, VIDEO_2, 1, q1))
+    p0 = Process(target=process_video, args=(1, VIDEO_1, 0, q0))
+    p1 = Process(target=process_video, args=(2, VIDEO_2, 1, q1))
 
     p0.start()
     p1.start()
