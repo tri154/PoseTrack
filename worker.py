@@ -45,75 +45,78 @@ def process_video(cam_id, cam_path, gpu_id, queue):
         if not ret:
             break
         frame_id += 1
-
-        logging(log_file, f"Start {frame_id}")
-
-
-        det_results = tensorrt_model(frame, classes=[0])[0]
-        dets = list()
-        for box in det_results.boxes:
-            cls = int(box.cls.item())
-            x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
-            score = float(box.conf.item())
-            dets.append([frame_id, cls, x1, y1, x2, y2, score])
-
-        dets = np.array(dets)
-        logging(log_file, "detected")
+        try:
+            logging(log_file, f"Start {frame_id}")
 
 
-        #POSE estimate
-        if len(dets) == 0:  # need to do smthing
+            det_results = tensorrt_model(frame, classes=[0])[0]
+            dets = list()
+            for box in det_results.boxes:
+                cls = int(box.cls.item())
+                x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
+                score = float(box.conf.item())
+                dets.append([frame_id, cls, x1, y1, x2, y2, score])
+
+            dets = np.array(dets)
+            logging(log_file, "detected")
+
+
+            #POSE estimate
+            if len(dets) == 0:  # need to do smthing
+                queue.put({
+                    "is_end": False,
+                    "camera_id": cam_id,
+                    "frame_id": frame_id,
+                    "detection_samples": [],
+                })
+                continue
+
+            bboxes_s = dets[:, 2:7]  # x1y1x2y2s
+
+            pose_result = infer_one_image(None, frame, bboxes_s, pose_estimator)
+            pose_result = np.concatenate((np.ones((len(pose_result), 1)) * frame_id, pose_result.astype(np.float32)), axis=1)
+            logging(log_file, "estimated pose")
+
+            #reid
+            bboxes_s = dets[:, 2:7]  # x1y1x2y2s
+            x1 = bboxes_s[:, 0]
+            y1 = bboxes_s[:, 1]
+            x2 = bboxes_s[:, 2]
+            y2 = bboxes_s[:, 3]
+
+            x1 = np.maximum(0, x1)
+            y1 = np.maximum(0, y1)
+            x2 = np.minimum(screen_width, x2)
+            y2 = np.minimum(screen_height, y2)
+
+            bboxes_s[:, 0] = x1
+            bboxes_s[:, 1] = y1
+            bboxes_s[:, 2] = x2
+            bboxes_s[:, 3] = y2
+            with torch.no_grad():
+                feat_sim = reid_model.process_frame_simplified(frame, bboxes_s[:, :-1])
+
+            logging(log_file, "reid-ed")
+
+
+            box_thred = 0.3
+            detection_sample_sv = []
+            for det, pose, reid in zip(dets, pose_result, feat_sim):  # doi voi moi detection trong do
+                if det[-1] < box_thred or len(det) == 0:
+                    continue  # loai bo confident thap
+                new_sample = Detection_Sample(bbox=det[2:], keypoints_2d=pose[6:].reshape(17, 3), reid_feat=reid, cam_id=cam_id,
+                                              frame_id=frame_id)
+                detection_sample_sv.append(new_sample)
             queue.put({
                 "is_end": False,
                 "camera_id": cam_id,
                 "frame_id": frame_id,
-                "detection_samples": [],
+                "detection_samples": detection_sample_sv,
             })
-            continue
-
-        bboxes_s = dets[:, 2:7]  # x1y1x2y2s
-
-        pose_result = infer_one_image(None, frame, bboxes_s, pose_estimator)
-        pose_result = np.concatenate((np.ones((len(pose_result), 1)) * frame_id, pose_result.astype(np.float32)), axis=1)
-        logging(log_file, "estimated pose")
-
-        #reid
-        bboxes_s = dets[:, 2:7]  # x1y1x2y2s
-        x1 = bboxes_s[:, 0]
-        y1 = bboxes_s[:, 1]
-        x2 = bboxes_s[:, 2]
-        y2 = bboxes_s[:, 3]
-
-        x1 = np.maximum(0, x1)
-        y1 = np.maximum(0, y1)
-        x2 = np.minimum(screen_width, x2)
-        y2 = np.minimum(screen_height, y2)
-
-        bboxes_s[:, 0] = x1
-        bboxes_s[:, 1] = y1
-        bboxes_s[:, 2] = x2
-        bboxes_s[:, 3] = y2
-        with torch.no_grad():
-            feat_sim = reid_model.process_frame_simplified(frame, bboxes_s[:, :-1])
-
-        logging(log_file, "reid-ed")
-
-
-        box_thred = 0.3
-        detection_sample_sv = []
-        for det, pose, reid in zip(dets, pose_result, feat_sim):  # doi voi moi detection trong do
-            if det[-1] < box_thred or len(det) == 0:
-                continue  # loai bo confident thap
-            new_sample = Detection_Sample(bbox=det[2:], keypoints_2d=pose[6:].reshape(17, 3), reid_feat=reid, cam_id=cam_id,
-                                          frame_id=frame_id)
-            detection_sample_sv.append(new_sample)
-        queue.put({
-            "is_end": False,
-            "camera_id": cam_id,
-            "frame_id": frame_id,
-            "detection_samples": detection_sample_sv,
-        })
-        logging(log_file, f"Done {frame_id}")
+            logging(log_file, f"Done {frame_id}")
+        except Exception as e:
+            logging(log_file, str(e))
+            logging(log_file, traceback.format_exc())
 
 
     
