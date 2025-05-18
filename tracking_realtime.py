@@ -9,10 +9,10 @@ import numpy as np
 from kafka import KafkaProducer
 import json
 import traceback
-producer = KafkaProducer(
-    bootstrap_servers='183.80.93.109:9092',
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
-)
+# producer = KafkaProducer(
+#     bootstrap_servers='183.80.93.109:9092',
+#     value_serializer=lambda v: json.dumps(v).encode('utf-8')
+# )
 
 
 # VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
@@ -94,9 +94,9 @@ def main():
     p0.join()
     p1.join()
 
-    producer.send('tracking', "Done")
-    producer.flush()
-    producer.close()
+    # producer.send('tracking', "Done")
+    # producer.flush()
+    # producer.close()
 
     end_time = time.time()
     fps = frame_id / (end_time - start_time)
