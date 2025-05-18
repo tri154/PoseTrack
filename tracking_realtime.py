@@ -83,7 +83,9 @@ def main():
 
                 # producer.send('tracking', frame_results[:, :-1].tolist())
                 # logging(log_file, 'sending')
-                producer.send('tracking', frame_results_with_timestamp.tolist())
+
+                # producer.send('tracking', frame_results_with_timestamp.tolist())
+
                 # print("Sent")
             except Exception as e:
                 logging(log_file, str(traceback.format_exc()))
