@@ -75,8 +75,6 @@ def main():
                 frame_results_with_timestamp = np.hstack(
                     (frame_results[:, :-1], np.full((frame_results.shape[0], 1), timestamp)))
 
-                frame_results_with_timestamp = frame_results_with_timestamp.astype(object)
-
                 logging(log_file, [type(val) for val in frame_results_with_timestamp[0]])
                 with open(SAVE_PATH, 'a') as f:
                     np.savetxt(f, frame_results_with_timestamp, fmt='%d %d %d %d %d %d %d %f %f %s')
