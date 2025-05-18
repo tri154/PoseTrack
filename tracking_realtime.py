@@ -77,7 +77,7 @@ def main():
 
                 logging(log_file, [type(val) for val in frame_results_with_timestamp[0]])
                 with open(SAVE_PATH, 'a') as f:
-                    np.savetxt(f, frame_results_with_timestamp, fmt='%s %s %s %s %s %s %s %f %f %s')
+                    np.savetxt(f, frame_results_with_timestamp, fmt='%s %s %s %s %s %s %s %s %s %s')
                     # for row in frame_results:
                     #     np.savetxt(f, row[:, :-1], fmt='%d %d %d %d %d %d %d %f %f')
                     f.write('\n')
