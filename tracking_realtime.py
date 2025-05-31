@@ -10,7 +10,7 @@ from kafka import KafkaProducer
 import json
 import traceback
 import argparse
-
+from util.camera import Camera
 
 
 
