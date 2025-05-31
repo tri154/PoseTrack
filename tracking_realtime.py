@@ -15,10 +15,10 @@ import traceback
 # )
 
 
-# VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
-# VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
-VIDEO_1="/kaggle/input/test-video-1/cam1.mp4"
-VIDEO_2="/kaggle/input/test-video-1/cam2.mp4"
+VIDEO_1="/kaggle/input/aic2024-sample/cam1-537/537_shorten.mp4"
+VIDEO_2="/kaggle/input/aic2024-sample/cam2-543/543_shorten.mp4"
+# VIDEO_1="/kaggle/input/test-video-1/cam1.mp4"
+# VIDEO_2="/kaggle/input/test-video-1/cam2.mp4"
 SAVE_PATH="/kaggle/working/PoseTrack/custom_result/track_results.txt"
 
 import datetime
@@ -75,7 +75,7 @@ def main():
                 frame_results_with_timestamp = np.hstack(
                     (frame_results[:, :-1], np.full((frame_results.shape[0], 1), timestamp)))
 
-                logging(log_file, [type(val) for val in frame_results_with_timestamp[0]])
+                # logging(log_file, [type(val) for val in frame_results_with_timestamp[0]])
                 with open(SAVE_PATH, 'a') as f:
                     np.savetxt(f, frame_results_with_timestamp, fmt='%s %s %s %s %s %s %s %s %s %s')
                     # for row in frame_results:
