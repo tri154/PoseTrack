@@ -20,9 +20,9 @@ def get_pose_tracker():
     # cal_dir = "/kaggle/input/aic2024-sample/"
     # cals.append(Camera(osp.join(cal_dir, 'cam1-537', "calibration.json")))
     # cals.append(Camera(osp.join(cal_dir, 'cam2-543', "calibration.json")))
-    cal_dir = "/kaggle/input/test-video/"
-    cals.append(Camera(osp.join(cal_dir, 'cam1_matrices.json'), 1))
-    cals.append(Camera(osp.join(cal_dir, 'cam2_matrices.json'), 2))
+    cal_dir = "/kaggle/input/test-video-1"
+    cals.append(Camera(osp.join(cal_dir, 'calibration_cam1.json'), 1))
+    cals.append(Camera(osp.join(cal_dir, 'calibration_cam2.json'), 2))
     tracker = PoseTracker(cals)
     return tracker
 
