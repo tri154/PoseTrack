@@ -114,9 +114,9 @@ def main():
     p0.join()
     p1.join()
 
-    # producer.send('tracking', "Done")
-    # producer.flush()
-    # producer.close()
+    producer.send('tracking', "Done")
+    producer.flush()
+    producer.close()
 
     end_time = time.time()
     fps = frame_id / (end_time - start_time)
