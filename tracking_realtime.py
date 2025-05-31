@@ -44,7 +44,7 @@ def main():
 
     VIDEO_1 = args.video1
     VIDEO_2 = args.video2
-    SAVE_PATH = args.SAVE_PATH
+    SAVE_PATH = args.save_path
     topic = args.topic
 
     producer = KafkaProducer(
