@@ -16,6 +16,8 @@ To run tracking, make sure the Kafka host is runing, this is an example of 2 cam
 
 Here is an example runing on Kaggle: https://www.kaggle.com/code/trikaggle/posetrack-bigdata
 
+Experiment videos: https://drive.google.com/drive/folders/1RgHXbHsBICNOUsiLtCvTsNai2fcATMGx?usp=drive_link
+
 ## Acknowledgement
 
 Big thanks to the following repo and challenge for sharing such helpful code and datasets:
