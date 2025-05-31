@@ -40,7 +40,8 @@ def main():
     parser.add_argument("--cal2", type = str)
 
     args = parser.parse_args()
-    cals = [args.cal1, args.cal2]
+
+    cals = [Camera(args.cal1, 1), Camera(args.cal2, 2)]
 
     VIDEO_1 = args.video1
     VIDEO_2 = args.video2
